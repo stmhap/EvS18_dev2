@@ -22,11 +22,11 @@ class OxfordIIITPetsData(pl.LightningDataModule):
         ])
 
         # Oxford IIIT Pets Segmentation dataset loaded via torchvision.       
-        self.train_data = torchvision.datasets.OxfordIIITPet(root=self.data_dir_train, split="trainval", 
+        self.train_data = torchvision.datasets.OxfordIIITPet(root=self.train_data_path, split="trainval", 
                                                              target_types="segmentation", download=True, 
                                                              transform=transform_resize_tensor, 
                                                              target_transform=transform_resize_tensor)
-        self.test_data = torchvision.datasets.OxfordIIITPet(root=self.data_dir_test, split="test", 
+        self.test_data = torchvision.datasets.OxfordIIITPet(root=self.test_data_path, split="test", 
                                                             target_types="segmentation", download=True, 
                                                             transform=transform_resize_tensor, 
                                                             target_transform = transform_resize_tensor)
