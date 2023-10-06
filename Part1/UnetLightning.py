@@ -2,7 +2,7 @@ import pytorch_lightning as pl
 import torch
 from torch import nn
 from unet import UNet
-from loss import DiceLoss
+from utils import DiceLoss
 
 class UnetLightning(pl.LightningModule):
     def __init__(self, loss_func = 'CE', contract_method = 'MP', expand_method = 'Tr'):
