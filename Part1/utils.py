@@ -5,6 +5,8 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 import random
+import numpy as np
+
 
 class DiceLoss(nn.Module):
     def __init__(self):
@@ -52,29 +54,29 @@ def plot_losses(train_losses, test_losses, title):
   fig.suptitle(title, fontsize=16, x=0.5, y=1.10)
 
 
-def show_image_results(model, test_dataloader):
-    model.eval()
-    model.to('cpu')
-    transform = T.ToPILImage()
-    (test_inputs, test_targets) = next(iter(test_dataloader))
-    fig, arr = plt.subplots(6, 3, figsize=(15, 15)) # batch size 16
+# def show_image_results(model, test_dataloader):
+#     model.eval()
+#     model.to('cpu')
+#     transform = T.ToPILImage()
+#     (test_inputs, test_targets) = next(iter(test_dataloader))
+#     fig, arr = plt.subplots(6, 3, figsize=(15, 15)) # batch size 16
 
-    for index in range(6):
-      img = test_inputs[index].unsqueeze(0)
-      pred_y = model(img)
-      pred_y = nn.Softmax(dim=1)(pred_y)
-      pred_mask = pred_y.argmax(dim=1)
-      pred_mask = pred_mask.unsqueeze(1).to(torch.float)
+#     for index in range(6):
+#       img = test_inputs[index].unsqueeze(0)
+#       pred_y = model(img)
+#       pred_y = nn.Softmax(dim=1)(pred_y)
+#       pred_mask = pred_y.argmax(dim=1)
+#       pred_mask = pred_mask.unsqueeze(1).to(torch.float)
 
 
-      arr[index,0].imshow(transform(test_inputs[index]))
-      arr[index,0].set_title('Processed Image')
-      arr[index,1].imshow(transform(test_targets[index].float()))
-      arr[index,1].set_title('Actual Masked Image ')
-      arr[index,2].imshow(pred_mask.squeeze(0).squeeze(0))
-      arr[index,2].set_title('Predicted Masked Image ')
+#       arr[index,0].imshow(transform(test_inputs[index]))
+#       arr[index,0].set_title('Processed Image')
+#       arr[index,1].imshow(transform(test_targets[index].float()))
+#       arr[index,1].set_title('Actual Masked Image ')
+#       arr[index,2].imshow(pred_mask.squeeze(0).squeeze(0))
+#       arr[index,2].set_title('Predicted Masked Image ')
 
-def VisualizeResults(test_dataloader, litmodel, batch_size):
+def show_image_results(test_dataloader, litmodel, batch_size):
 
     #test_dataloader = datamodule.test_dataloader()
     for batch in test_dataloader:
