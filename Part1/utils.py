@@ -15,7 +15,7 @@ class DiceLoss(nn.Module):
 
         # Reshape the predicted output tensor to [batch_size * height * width, num_classes]
         pred = pred.permute(0, 2, 3, 1).contiguous().view(-1, 3)
-        pred = F.softmax(pred)
+        pred = F.softmax(pred,dim=1)
         # Reshape the tensor back to [batch_size, 3, height, width]
         pred = pred.view(-1, 400, 600, 3).permute(0, 3, 1, 2)
 
@@ -73,3 +73,35 @@ def show_image_results(model, test_dataloader):
       arr[index,1].set_title('Actual Masked Image ')
       arr[index,2].imshow(pred_mask.squeeze(0).squeeze(0))
       arr[index,2].set_title('Predicted Masked Image ')
+
+def VisualizeResults(test_dataloader, litmodel, batch_size):
+
+    #test_dataloader = datamodule.test_dataloader()
+    for batch in test_dataloader:
+        images, masks = batch
+        break  # Break to get the first batch (a batch of images and labels)
+
+    for index in range(6):
+        # Select one image and its corresponding label
+        index = random.randint(0, batch_size)
+        image = images[index]
+        mask = masks[index]*255
+
+        with torch.no_grad():
+            input_image = image.to("cuda").unsqueeze(0)
+            pred_mask_prob = litmodel.model(input_image)
+
+        # From the probability of predictions for 3 classes, 
+        # construct the actual prediction of values - 1,2,3
+        pred_mask = torch.argmax(pred_mask_prob, dim=1) + 1
+        pred_mask = pred_mask.squeeze().cpu()
+
+        mask = mask.squeeze()
+        img_np  = np.transpose(image.numpy(), (1, 2, 0))
+        fig, arr = plt.subplots(1, 3, figsize=(15, 15))
+        arr[0].imshow(img_np)
+        arr[0].set_title('Image ')
+        arr[1].imshow(mask)
+        arr[1].set_title('Actual Mask')
+        arr[2].imshow(pred_mask)
+        arr[2].set_title('Predicted Mask')     
